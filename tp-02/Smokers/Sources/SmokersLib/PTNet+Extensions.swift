@@ -43,7 +43,7 @@ public extension PTNet {
 
         return marqInitial
     }
-
+    //fonction pour la question 4.1
     public func sum (mark: MarkingGraph) -> Int{
       var parc = [MarkingGraph]()
       var aParcourir = [MarkingGraph]()
@@ -60,7 +60,7 @@ public extension PTNet {
 
       return parc.count
     }
-
+    //fonction pour la question 4.2
     public func twoPlusSmokers (mark: MarkingGraph) -> Bool {
       var parc = [MarkingGraph]()
       var aParcourir = [MarkingGraph]()
@@ -85,7 +85,7 @@ public extension PTNet {
       }
       return false
     }
-
+    //fonction pour la question 4.3
     public func twoTimesSameIngredient (mark: MarkingGraph) -> Bool {
       var parc = [MarkingGraph]()
       var aParcourir = [MarkingGraph]()
