@@ -4,6 +4,31 @@ extension PredicateNet {
     public func markingGraph(from marking: MarkingType) -> PredicateMarkingNode<T>? {
         // Write your code here ...
 
+        let initiale = PredicateMarkingNode<T>(marking: marking)    //permet d'initialiser les variable de bases
+        var noeudVisiter: [PredicateMarkingNode<T>] = [initiale]   //noeud à visiter
+        while(!noeudVisiter.isEmpty){                              //
+          let act = noeudVisiter.popLast()!                        //On récupère l'élément actuel
+          for trans in transitions {
+            act.successors[trans] = [:]                           //on initialise les successors
+            let binding: [PredicateTransition<T>.Binding] = trans.fireableBingings(from: act.marking) //permet de lancer les différents binding pour la transition et marquage actuel
+            for b in binding{                                     //parcourir le binding
+                let nouvMarking = PredicateMarkingNode(marking: trans.fire(from: act.marking, with:b)!)//
+                for ini in initiale{                               //Itération sur les éléments déjà existant pour éviter les boucles infini
+                  if (PredicateNet.greater(nouvMarking.marking, ini.marking)){ //si le nouveau marquage est plus grand que le marquage
+                    return nil
+                  }
+                }
+                if let visitedMarking = initiale.first(where: {PredicateNet.equals($0.marking, nouvMarking.marking)})
+                {
+                  act.successors[trans]![b] = visitedMarking      //si le marquage est déjà visité alors on l'ajoute dnas les successors
+                } else if(!noeudVisiter.contains(where: {PredicateNet.equals($0.marking, nouvMarking.marking)}))
+                {
+                  noeudVisiter.append(nouvMarking)                //nouveau marquage est ajouté à la liste des noeuds à visiter
+                  act.successors[trans]![b] = nouvMarking         //et aussi à la liste des successors
+                }
+            }
+          }
+        }
         // Note that I created the two static methods `equals(_:_:)` and `greater(_:_:)` to help
         // you compare predicate markings. You can use them as the following:
         //
@@ -13,7 +38,7 @@ extension PredicateNet {
         // You may use these methods to check if you've already visited a marking, or if the model
         // is unbounded.
 
-        return nil
+        return initiale
     }
 
     // MARK: Internals
