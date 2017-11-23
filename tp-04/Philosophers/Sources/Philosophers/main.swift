@@ -50,3 +50,47 @@ do {
         print(m)
     }
 }
+
+do {
+  //dom(Ingredients) = {p, t, m}
+enum Ingredients {
+case p, t, m
+}
+// dom(Smokers) = {mia, bob, tom}
+enum Smokers {
+case mia, bob, tom
+}
+// dom(Referee) = {rob}
+enum Referee{
+case rob
+}
+enum Types {
+case ingredients (Ingredients)
+case smoker (Smokers)
+case referee (Referee)
+}
+let s = PredicateTransition<Types> {
+  preconditions: [
+    PredicateArc(Place: "i", label: [.variable("x"), .variable("y")]),
+    PredicateArc(Place: "s", label: [.variable("s")]),
+  ],
+  conditions :[{binding in
+    guard case let .smokers(s) = binding["s"]!,
+  case let .ingredients(x) = binding["x"]!,
+  case let .ingredients(y) = binding["y"]!
+    else{
+      return false
+    }
+
+    switch (s, x, y) {
+    case (.mia, .p, .t): return true
+    case (.tom, .p, .m): return true
+    case (.bob, .t, .m): return true
+
+    default: return false
+
+    }
+  }
+  ]
+}
+}
