@@ -51,6 +51,7 @@ do {
     }
 }
 
+/**
 do {
   //dom(Ingredients) = {p, t, m}
 enum Ingredients {
@@ -94,3 +95,4 @@ let s = PredicateTransition<Types> {
   ]
 }
 }
+*/
