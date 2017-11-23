@@ -1,6 +1,7 @@
 import PetriKit
 import PhilosophersLib
 
+
 do {
     enum C: CustomStringConvertible {
         case b, v, o
@@ -49,6 +50,28 @@ do {
     for m in philosophers.simulation(from: philosophers.initialMarking!).prefix(10) {
         print(m)
     }
+}
+
+
+do{
+  let philosophers = lockFreePhilosophers(n: 5)
+  let graph = philosophers.markingGraph(from: philosophers.initialMarking!)
+  print("réponse question 1: marquages possibles dans le modèle des philosophes non bloquable à 5 philosophes: \(graph!.count)")
+}
+
+do{
+  let philosophers = lockablePhilosophers(n: 5)
+  let graph = philosophers.markingGraph(from: philosophers.initialMarking!)
+  print("réponse question 2: marquages possibles dans le modèle des philosophes bloquable à 5 philosophes : \(graph!.count)")
+}
+
+do {
+  print("réponse question 3: voici un exemple ci-dessous d'état où le réseau est bloqué dans le modèle des philosophes bloquable à 5 philosophes.")
+  let philosophers = lockablePhilosophers(n: 5)
+  let graph = philosophers.markingGraph(from: philosophers.initialMarking!)
+  for g in graph! {
+    print("\(g.marking)")
+  }
 }
 
 /**
