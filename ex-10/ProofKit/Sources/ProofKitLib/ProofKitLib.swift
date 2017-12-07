@@ -73,14 +73,85 @@ public enum Formula {
 
     /// The disjunctive normal form of the formula.
     public var dnf: Formula {
-        // Write your code here ...
-        return self
+        //on utilise la formule nnf pour obtenir la dnf
+          switch self.nnf{
+
+          case .proposition(_):
+            //on fait rien si il s'agit d'une proposition
+            return self.nnf
+
+          case .negation (_):
+            //il n'y a rien a faire dans ce cas aussi
+            return self.nnf
+            //dans le cas d'une disjonction on sépare la formule en 2, partie gauche et partie droite
+          case .disjunction (let a, let b):
+            //retourne la dnf de partie gauche et partie droite
+            return a.dnf || b.dnf
+            //dans le cas d'une conjontion, on refait la meme chose que pour la disjonction
+          case .conjunction (let a, let b):
+            //partie gauche
+            switch a.dnf {
+              //cas de disjontion: on distribue
+            case .disjunction (let c, let d):
+              return (b && d).dnf || (b && c).dnf
+
+            default: break
+            }
+            //partie droite
+            switch b.dnf {
+            //cas de disjontion: on distribue
+            case .disjunction(let c, let d):
+              return (c && a).dnf || (d && a).dnf
+
+            default: break
+            }
+            //sinon rien a faire et on retourne la cnf qui est également la dnf du coup
+            return self.cnf
+            //cas de l'implication jamais utilisé car elle est supprimé par la nnf
+          case .implication(_,_):
+            return self.nnf
+          }
     }
 
     /// The conjunctive normal form of the formula.
+    /* Pour la cnf c'est la même chose que la dnf
+     * C'est juste les règles qui changent
+     */
     public var cnf: Formula {
-        // Write your code here ...
-        return self
+
+        switch self.nnf {
+
+        case .proposition(_):
+          return self.nnf
+
+        case .negation(_):
+          return self.nnf
+
+        case .conjunction(let a, let b):
+          return a.cnf && b.cnf
+
+        case .disjunction(let a, let b):
+
+          switch a.cnf  {
+
+          case .conjunction (let c, let d):
+            return (b || c).cnf && (b || d).cnf
+
+          default: break
+          }
+
+          switch b.cnf  {
+          case .conjunction (let c, let d):
+            return (a || c).cnf && (a || d).cnf
+
+          default: break
+          }
+
+          return self.dnf
+
+        case .implication (_,_):
+          return self.nnf
+        }
     }
 
     /// The propositions the formula is based on.
@@ -192,6 +263,7 @@ public struct Judgment {
     public let conclusions: Set<Formula>
 
     public var isProvable: Bool {
+      print(self)
         let Γ = self.hypotheses
         let Δ = self.conclusions
 
